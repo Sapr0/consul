@@ -8,7 +8,7 @@ provides :consul_installation, provider: 'binary'
 default_action :create
 unified_mode true
 
-property :extract_to,       String, default: lazy { node.platform_family?('windows') ? node.config_prefix_path : '/opt/consul' }
+property :extract_to,       String, default: lazy { node.platform?('windows') ? config_prefix_path : '/opt/consul' }
 property :archive_url,      String, default: 'https://releases.hashicorp.com/consul/%{version}/%{basename}'
 property :archive_basename, String, default: lazy { binary_basename }
 property :archive_checksum, String, default: lazy { binary_checksum }
@@ -36,11 +36,11 @@ action :create do
     not_if { windows? }
   end
 
-  link "#{node['config_prefix_path']}\\consul.exe" do
+  link "#{config_prefix_path}\\consul.exe" do
     to consul_program
     only_if { windows? }
   end
-  windows_path node['config_prefix_path'] do
+  windows_path config_prefix_path do
     action :add
     only_if { windows? }
   end

@@ -4,7 +4,7 @@
 #
 # Copyright:: 2014-2016, Bloomberg Finance L.P.
 #
-provides :consul_service, os: windows
+provides :consul_service, os: 'windows'
 default_action :enable
 unified_mode true
 
@@ -22,7 +22,7 @@ action :enable do
 
   nssm 'consul' do
     program new_resource.program
-    args command(new_resource.config_file, new_resource.config_dir)
+    args %(agent -config-file="#{new_resource.config_file}" -config-dir="#{new_resource.config_dir}")
     parameters new_resource.nssm_params.select { |_k, v| v != '' }
     action :install
   end

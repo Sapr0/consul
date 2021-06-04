@@ -173,6 +173,8 @@ action :delete do
 end
 
 action_class do
+  include ConsulCookbook::Helpers
+
   # Transforms the resource into a JSON format which matches the
   # Consul service's configuration format.
   def params_to_json

@@ -36,6 +36,8 @@ action :delete do
 end
 
 action_class do
+  include ConsulCookbook::Helpers
+
   def configure_diplomat
     begin
       require 'diplomat'

@@ -29,7 +29,7 @@ action :create do
   end
 
   file new_resource.path do
-    content new_resource.params_to_json
+    content params_to_json
     unless platform?('windows')
       owner new_resource.user
       group new_resource.group
@@ -45,7 +45,11 @@ action :delete do
 end
 
 action_class do
-  final_parameters = new_resource.parameters
-  final_parameters = final_parameters.merge(name: name) if %w(check service).include?(new_resource.type) && final_parameters[:name].nil?
-  JSON.pretty_generate(new_resource.type => final_parameters)
+  include ConsulCookbook::Helpers
+
+  def params_to_json
+    final_parameters = new_resource.parameters
+    final_parameters = final_parameters.merge(name: new_resource.name) if %w(check service).include?(new_resource.type) && final_parameters[:name].nil?
+    JSON.pretty_generate(new_resource.type => final_parameters)
+  end
 end

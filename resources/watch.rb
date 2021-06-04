@@ -25,7 +25,7 @@ action :create do
   end
 
   file new_resource.path do
-    content new_resource.params_to_json
+    content params_to_json
     unless platform?('windows')
       owner new_resource.user
       group new_resource.group
@@ -41,6 +41,8 @@ action(:delete) do
 end
 
 action_class do
+  include ConsulCookbook::Helpers
+
   def params_to_json
     JSON.pretty_generate(watches: [{ type: new_resource.type }.merge(new_resource.parameters)])
   end
