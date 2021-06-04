@@ -31,7 +31,7 @@ are passed directly into the Chef resource/providers which are exposed
 for more advanced configuration.
 
 Out of the box the following platforms are certified to work and are
-tested using our [Test Kitchen][8] configuration. Additional platforms
+tested using our [Test Kitchen][6] configuration. Additional platforms
 _may_ work, but your mileage may vary.
 
 - RHEL/CentOS 7 & 8
@@ -43,7 +43,7 @@ _may_ work, but your mileage may vary.
 
 Out of the box the default recipe installs and configures the Consul
 agent to run as a service in _client mode_. The intent here is that
-your infrastructure already has a [quorum of servers][13]. In order
+your infrastructure already has a [quorum of servers][11]. In order
 to configure Consul to connect to your cluster you would supply an
 array of addresses for the Consul agent to join. This would be done
 in your [wrapper cookbook][2]:
@@ -59,7 +59,7 @@ new cluster. The best way to do this is through the use of a
 [wrapper cookbook][2] which tunes specific node attributes for a
 production server deployment.
 
-The [Consul cluster cookbook][14] is provided as an example.
+The [Consul cluster cookbook][12] is provided as an example.
 
 ## Advanced Usage
 
@@ -122,7 +122,7 @@ watches and definitions. We write these out as
 a separate configuration file in the JSON file format. The provider
 for both of these resources are identical in functionality.
 
-Below is an example of writing a [Consul service definition][10] for
+Below is an example of writing a [Consul service definition][8] for
 the master instance of Redis. We pass in several parameters and tell
 the resource to notify the proper instance of the Consul service to
 reload.
@@ -135,7 +135,7 @@ consul_definition 'redis' do
 end
 ```
 
-A [check definition][11] can easily be added as well. You simply have
+A [check definition][9] can easily be added as well. You simply have
 to change the type and pass in the correct parameters. The definition
 below checks memory utilization using a script on a ten second interval.
 
@@ -166,7 +166,7 @@ consul_definition 'vault' do
 end
 ```
 
-Finally, a [watch][9] is created below to tell the agent to monitor to
+Finally, a [watch][7] is created below to tell the agent to monitor to
 see if an application has been deployed. Once that application is
 deployed a script is run locally. This can be used, for example, as a
 lazy way to clear a HTTP disk cache.
@@ -187,11 +187,11 @@ Chef run.
 
 ### ACLs
 
-The `consul_acl` resource allows management of [Consul ACL rules][15]. Supported
+The `consul_acl` resource allows management of [Consul ACL rules][13]. Supported
 actions are `:create` and `:delete`. The `:create` action will update/insert
 as necessary.
 
-The `consul_acl` resource requires the [Diplomat Ruby API][16] gem to be
+The `consul_acl` resource requires the [Diplomat Ruby API][14] gem to be
 installed and available to Chef before using the resource. This can be
 accomplished by including `consul::client_gem` recipe in your run list. If you
 are using Chef Infra Client 15.8+ you will need to make sure you are using at
@@ -240,7 +240,7 @@ Consul v1.0 states that Go 1.9 is a requirement. The default go installation use
 1.5, so you may need to override a `['go']['version']` attribute to allow the
 git installation to work reliably.
 
-All of the [options available on the command-line][12] can be passed
+All of the [options available on the command-line][10] can be passed
 into the resource. This could potentially be a *very dangerous*
 operation. You should absolutely understand what you are doing. By the
 nature of this command it is _impossible_ for it to be idempotent.
@@ -250,18 +250,16 @@ nature of this command it is _impossible_ for it to be idempotent.
 [2]: http://blog.vialstudios.com/the-environment-cookbook-pattern#thewrappercookbook
 [3]: http://blog.vialstudios.com/the-environment-cookbook-pattern#thelibrarycookbook
 [4]: https://github.com/johnbellone/libartifact-cookbook
-[5]: https://github.com/poise/poise
-[6]: https://github.com/poise/poise-service
-[7]: https://github.com/skottler/selinux
-[8]: https://github.com/test-kitchen/test-kitchen
-[9]: https://consul.io/docs/agent/watches.html
-[10]: https://consul.io/docs/agent/services.html
-[11]: https://consul.io/docs/agent/checks.html
-[12]: https://consul.io/docs/commands/exec.html
-[13]: https://en.wikipedia.org/wiki/Quorum_(distributed_computing)
-[14]: https://github.com/johnbellone/consul-cluster-cookbook
-[15]: https://www.consul.io/docs/internals/acl.html
-[16]: https://github.com/WeAreFarmGeek/diplomat
+[5]: https://github.com/skottler/selinux
+[6]: https://github.com/test-kitchen/test-kitchen
+[7]: https://consul.io/docs/agent/watches.html
+[8]: https://consul.io/docs/agent/services.html
+[9]: https://consul.io/docs/agent/checks.html
+[10]: https://consul.io/docs/commands/exec.html
+[11]: https://en.wikipedia.org/wiki/Quorum_(distributed_computing)
+[12]: https://github.com/johnbellone/consul-cluster-cookbook
+[13]: https://www.consul.io/docs/internals/acl.html
+[14]: https://github.com/WeAreFarmGeek/diplomat
 
 ## Contributors
 

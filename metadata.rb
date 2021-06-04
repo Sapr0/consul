@@ -16,5 +16,3 @@ supports 'windows'
 
 depends 'nssm', '>= 4.0.0'
 depends 'golang'
-depends 'poise', '~> 2.2'
-depends 'poise-service', '~> 1.4'
