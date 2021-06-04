@@ -9,16 +9,14 @@ default_action :enable
 unified_mode true
 
 property :service_name, String, name_property: true
-property :command,      String, required: true
-property :config_file,  String, default: lazy { node['consul']['config']['path'] }
 property :user,         String, default: lazy { node['consul']['service_user'] }
 property :group,        String, default: lazy { node['consul']['service_group'] }
 property :environment,  Hash,   default: lazy { default_environment }
+property :config_file,  String, default: lazy { node['consul']['config']['path'] }
 property :data_dir,     String, default: lazy { node['consul']['config']['data_dir'] }
 property :config_dir,   String, default: lazy { node['consul']['service']['config_dir'] }
 property :nssm_params,  Hash,   default: lazy { node['consul']['service']['nssm_params'] }
-property :program,      String, default: '/usr/local/bin/consul'
-property :acl_token,    String, default: lazy { node['consul']['config']['acl_master_token'] }
+property :program,      String, default: lazy { install_path }
 
 action :enable do
   directory new_resource.data_dir do

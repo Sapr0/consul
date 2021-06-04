@@ -41,7 +41,15 @@ module ConsulCookbook
     end
 
     def data_path
-      windows? ? join_path(program_files, 'consul', 'data') : join_path('/var/lib', 'consul')
+      windows? ? join_path(program_files, 'consul', 'data') : join_path('/var', 'lib', 'consul')
+    end
+
+    def extract_path
+      windows? ? join_path(program_files, 'consul') : join_path('/opt', 'consul')
+    end
+
+    def install_path
+      windows? ? join_path(program_files, 'consul', 'consul.exe') : join_path('/usr', 'local', 'bin', 'consul')
     end
   end
 end

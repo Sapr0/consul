@@ -9,7 +9,7 @@ default_action :create
 unified_mode true
 
 property :version,          String, name_property: true
-property :extract_to,       String, default: lazy { node.platform?('windows') ? config_prefix_path : '/opt/consul' }
+property :extract_path,     String, default: lazy { extract_path }
 property :archive_url,      String, default: 'https://releases.hashicorp.com/consul/%{version}/%{basename}'
 property :archive_basename, String, default: lazy { binary_basename }
 property :archive_checksum, String, default: lazy { binary_checksum }
@@ -24,23 +24,24 @@ action :create do
   remote_file url do
     destination join_path(new_resource.extract_to, new_resource.version)
     checksum new_resource.archive_checksum
-    not_if { ::File.exist?(consul_program) }
+    not_if { ::File.exist?(consul_version_path) }
   end
 
   archive_file join_path(new_resource.extract_to, new_resource.version) do
     destination join_path(new_resource.extract_to, new_resource.version)
-    not_if { ::File.exist?(consul_program) }
+    not_if { ::File.exist?(consul_version_path) }
   end
 
   link '/usr/local/bin/consul' do
-    to consul_program
+    to consul_version_path
     not_if { windows? }
   end
 
   link "#{config_prefix_path}\\consul.exe" do
-    to consul_program
+    to consul_version_path
     only_if { windows? }
   end
+
   windows_path config_prefix_path do
     action :add
     only_if { windows? }
@@ -57,7 +58,7 @@ end
 action_class do
   include ConsulCookbook::Helpers
 
-  def consul_program
+  def consul_version_path
     program = join_path(new_resource.extract_to, new_resource.version, 'consul')
     program += '.exe' if windows?
     program

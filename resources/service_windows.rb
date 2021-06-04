@@ -8,6 +8,15 @@ provides :consul_service, os: 'windows'
 default_action :enable
 unified_mode true
 
+property :service_name, String, name_property: true
+property :environment,  Hash,   default: lazy { default_environment }
+property :acl_token,    String, default: lazy { node['consul']['config']['acl_master_token'] }
+property :config_file,  String, default: lazy { node['consul']['config']['path'] }
+property :data_dir,     String, default: lazy { node['consul']['config']['data_dir'] }
+property :config_dir,   String, default: lazy { node['consul']['service']['config_dir'] }
+property :nssm_params,  Hash,   default: lazy { node['consul']['service']['nssm_params'] }
+property :program,      String, default: lazy { install_path }
+
 action :enable do
   directories = %W(#{new_resource.data_dir}
                    #{new_resource.config_dir}
@@ -30,8 +39,8 @@ end
 
 action :reload do
   execute 'Reload consul' do
+    cwd config_prefix_path
     command 'consul.exe reload' + (new_resource.acl_token ? " -token=#{new_resource.acl_token}" : '')
-    cwd ::File.dirname(new_resource.program)
     action :run
   end
 end
