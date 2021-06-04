@@ -33,46 +33,31 @@ export <%= key %>="<%= val %>"
 <%- end -%>
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 
-. /etc/rc.d/init.d/functions
+. /lib/lsb/init-functions
 
 _start() {
-    [ -x $exec ] || exit 5
     [ -f $conffile ] || exit 6
     [ -d $confdir ] || exit 6
 
-    umask 077
-    touch $pidfile $logfile
-    chown $user $pidfile $logfile
-
-    echo -n $"Starting $prog: "
-    daemon \
-        --pidfile=$pidfile \
-        --user=$user \
-        " { $exec agent -config-file=$conffile -config-dir=$confdir >> $logfile 2>&1 & } ; echo \$! >| $pidfile "
-    RETVAL=$?
-    echo
-    [ $RETVAL -eq 0 ] && touch $lockfile
-    return $RETVAL
+    touch $logfile
+    chown $user $logfile
+    echo "Starting $prog"
+    start-stop-daemon --start --quiet --background \
+        --pidfile $pidfile \
+        --chuid $user --chdir "<%= @data_dir %>" \
+        --startas /bin/bash -- -c "exec $exec agent -config-file=$conffile -config-dir=$confdir >> $logfile 2>&1"
 }
 
 _stop() {
-    echo -n $"Stopping $prog: "
-    ## graceful shutdown with SIGINT
-    killproc -p $pidfile $exec -SIGINT
-    RETVAL=$?
-    echo
-    [ $RETVAL -eq 0 ] && rm -f $lockfile $pidfile
-    return $RETVAL
+    start-stop-daemon --stop --quiet --pidfile $pidfile --user $user --retry=TERM/30/KILL/5
 }
 
 _status() {
-    status -p $pidfile -l $prog $exec
+    status_of_proc -p $pidfile $exec $prog
 }
 
 _reload() {
-    echo -n $"Reloading $prog: "
-    killproc -p $pidfile $exec -HUP
-    echo
+    start-stop-daemon --stop --quiet --pidfile $pidfile --user $user --signal "HUP"
 }
 
 _restart() {
