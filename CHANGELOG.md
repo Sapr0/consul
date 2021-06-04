@@ -4,6 +4,7 @@
 
 - Set minimum Chef version to 15.3+
 - Rewrite consul resources with Custom Resource to remove `poise` dependency
+- Added `consul_git_installation` and `consul_package_installation` as separate custom resources
 - Replace `poise_archive` with `archive_file`
 - Replace `poise_service_user` with `user` and `group` resources
 - Remove `build_essential` since it's already included in Chef 14+

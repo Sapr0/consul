@@ -4,13 +4,13 @@
 #
 # Copyright:: 2014-2016, Bloomberg Finance L.P.
 #
-provides :consul_installation, provider: 'git'
+provides :consul_git_installation
 default_action :create
 unified_mode true
 
+property :version,  String, name_property: true
 property :git_url,  String, default: 'https://github.com/hashicorp/consul'
 property :git_path, String, default: '/usr/local/go/src/github.com/hashicorp/consul'
-property :git_ref,  String, default: lazy { "v#{version}" }
 
 action :create do
   include_recipe 'golang::default'
@@ -27,7 +27,7 @@ action :create do
 
   git new_resource.git_path do
     repository new_resource.git_url
-    reference new_resource.git_ref
+    revision new_resource.version
     action :checkout
   end
 
