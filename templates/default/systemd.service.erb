@@ -5,12 +5,14 @@ After=network.target
 
 [Service]
 Environment=<%= @environment.map {|key, val| %Q{"#{key}=#{val}"} }.join(' ') %>
-ExecStart=<%= @command %>
-ExecReload=/bin/kill -<%= @reload_signal %> $MAINPID
-KillSignal=<%= @stop_signal %>
+ExecStart=<%= @program %> agent -config-file=<%= @config_file %> -config-dir <%= @config_dir %>
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
 User=<%= @user %>
-WorkingDirectory=<%= @directory %>
+WorkingDirectory=<%= @data_dir %>
 <%= "LimitNOFILE=#{node['consul']['service_nofile']}" if node['consul']['service_nofile'] %>
+Restart=on-failure
+RestartSec=30s
 
 [Install]
 WantedBy=multi-user.target
