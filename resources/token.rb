@@ -11,13 +11,13 @@ unified_mode true
 property :description,        String, name_property: true
 property :url,                String, default: 'http://localhost:8500'
 property :auth_token,         String, required: true
-property :secret_id,          String, default: nil
+property :secret_id,          String
 property :policies,           Array,  default: []
 property :roles,              Array,  default: []
 property :service_identities, Array,  default: []
 property :expiration_time,    String, default: ''
-property :expiration_ttl,     String, default: nil
-property :local,              [TrueClass, FalseClass], default: false
+property :expiration_ttl,     String
+property :local,              [true, false]
 property :ssl,                Hash,   default: {}
 property :to_acl,             Hash,   default: lazy { default_acl }
 

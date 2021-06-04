@@ -22,7 +22,7 @@ property :acl_agent_master_token,          String, default: ''
 property :acl_datacenter,                  String, default: ''
 property :acl_default_policy,              String, default: ''
 property :acl_down_policy,                 String, default: ''
-property :acl_enforce_version_8,           [TrueClass, FalseClass], equal_to: [true, false]
+property :acl_enforce_version_8,           [true, false]
 property :acl_master_token,                String, default: ''
 property :acl_replication_token,           String, default: ''
 property :acl_token,                       String, default: ''
@@ -32,12 +32,12 @@ property :advertise_addr,                  String, default: ''
 property :advertise_addr_wan,              String, default: ''
 property :atlas_acl_token,                 String, default: ''
 property :atlas_infrastructure,            String, default: ''
-property :atlas_join,                      [TrueClass, FalseClass], equal_to: [true, false]
+property :atlas_join,                      [true, false]
 property :atlas_token,                     String, default: ''
 property :atlas_endpoint,                  String, default: ''
 property :autopilot,                       Hash,   default: {}
 property :bind_addr,                       String, default: ''
-property :bootstrap,                       [TrueClass, FalseClass], equal_to: [true, false]
+property :bootstrap,                       [true, false]
 property :bootstrap_expect,                Integer
 property :ca_file,                         String, default: ''
 property :ca_path,                         String, default: ''
@@ -46,38 +46,38 @@ property :check_update_interval,           String, default: ''
 property :client_addr,                     String, default: ''
 property :data_dir,                        String, default: ''
 property :datacenter,                      String, default: ''
-property :disable_anonymous_signature,     [TrueClass, FalseClass], equal_to: [true, false]
-property :disable_host_node_id,            [TrueClass, FalseClass], equal_to: [true, false]
-property :disable_keyring_file,            [TrueClass, FalseClass], equal_to: [true, false]
-property :disable_remote_exec,             [TrueClass, FalseClass], equal_to: [true, false]
-property :disable_update_check,            [TrueClass, FalseClass], equal_to: [true, false]
-property :discard_check_output,            [TrueClass, FalseClass], equal_to: [true, false]
+property :disable_anonymous_signature,     [true, false]
+property :disable_host_node_id,            [true, false]
+property :disable_keyring_file,            [true, false]
+property :disable_remote_exec,             [true, false]
+property :disable_update_check,            [true, false]
+property :discard_check_output,            [true, false]
 # Not supported, but allow same attribute for v0.x and 1.0.6+
 property :discovery_max_stale,             String, default: ''
 property :dns_config,                      Hash,   default: {}
 property :domain,                          String, default: ''
-property :enable_acl_replication,          [TrueClass, FalseClass], equal_to: [true, false]
-property :enable_debug,                    [TrueClass, FalseClass], equal_to: [true, false]
-property :enable_script_checks,            [TrueClass, FalseClass], equal_to: [true, false]
-property :enable_syslog,                   [TrueClass, FalseClass], equal_to: [true, false]
+property :enable_acl_replication,          [true, false]
+property :enable_debug,                    [true, false]
+property :enable_script_checks,            [true, false]
+property :enable_syslog,                   [true, false]
 property :encrypt,                         String, default: ''
-property :encrypt_verify_incoming,         [TrueClass, FalseClass], equal_to: [true, false]
-property :encrypt_verify_outgoing,         [TrueClass, FalseClass], equal_to: [true, false]
+property :encrypt_verify_incoming,         [true, false]
+property :encrypt_verify_outgoing,         [true, false]
 property :http_api_response_headers,       Hash,   default: {}
 property :http_config,                     Hash,   default: {}
 property :key_file,                        String, default: ''
-property :leave_on_terminate,              [TrueClass, FalseClass], equal_to: [true, false]
+property :leave_on_terminate,              [true, false]
 property :limits,                          Hash,   default: {}
 property :log_level,                       String, equal_to: %w(INFO DEBUG WARN ERR)
 property :node_id,                         String, default: ''
 property :node_name,                       String, default: ''
 property :node_meta,                       Hash,   default: {}
-property :non_voting_server,               [TrueClass, FalseClass], equal_to: [true, false]
+property :non_voting_server,               [true, false]
 property :performance,                     Hash,   default: {}
 property :ports,                           Hash,   default: {}
 property :protocol,                        String, default: ''
 property :raft_protocol,                   Integer
-property :reap,                            [TrueClass, FalseClass], equal_to: [true, false]
+property :reap,                            [true, false]
 property :reconnect_timeout,               String, default: ''
 property :reconnect_timeout_wan,           String, default: ''
 property :recursor,                        String, default: ''
@@ -89,15 +89,15 @@ property :retry_join_azure,                Hash,   default: {}
 property :retry_join_ec2,                  Hash,   default: {}
 property :retry_join_wan,                  Array,  default: []
 property :retry_max,                       Integer
-property :rejoin_after_leave,              [TrueClass, FalseClass], equal_to: [true, false]
+property :rejoin_after_leave,              [true, false]
 property :segment,                         String, default: ''
 property :segments,                        Array,  default: []
 property :serf_lan_bind,                   String, default: ''
 property :serf_wan_bind,                   String, default: ''
-property :server,                          [TrueClass, FalseClass], equal_to: [true, false]
+property :server,                          [true, false]
 property :server_name,                     String, default: ''
 property :session_ttl_min,                 String, default: ''
-property :skip_leave_on_interrupt,         [TrueClass, FalseClass], equal_to: [true, false]
+property :skip_leave_on_interrupt,         [true, false]
 property :start_join,                      Array,  default: []
 property :start_join_wan,                  Array,  default: []
 property :statsd_addr,                     String, default: ''
@@ -107,17 +107,17 @@ property :syslog_facility,                 String, default: ''
 property :telemetry,                       Hash,   default: {}
 property :tls_cipher_suites,               String, default: ''
 property :tls_min_version,                 String, equal_to: %w(tls10 tls11 tls12)
-property :tls_prefer_server_cipher_suites, [TrueClass, FalseClass], equal_to: [true, false]
-property :translate_wan_addrs,             [TrueClass, FalseClass], equal_to: [true, false]
-property :ui,                              [TrueClass, FalseClass], equal_to: [true, false]
+property :tls_prefer_server_cipher_suites, [true, false]
+property :translate_wan_addrs,             [true, false]
+property :ui,                              [true, false]
 property :ui_dir,                          String, default: ''
 property :unix_sockets,                    Hash,   default: {}
-property :verify_incoming,                 [TrueClass, FalseClass], equal_to: [true, false]
-property :verify_incoming_https,           [TrueClass, FalseClass], equal_to: [true, false]
-property :verify_incoming_rpc,             [TrueClass, FalseClass], equal_to: [true, false]
-property :verify_outgoing,                 [TrueClass, FalseClass], equal_to: [true, false]
-property :verify_server_hostname,          [TrueClass, FalseClass], equal_to: [true, false]
-property :watches,                         Hash,   default: {}
+property :verify_incoming,                 [true, false]
+property :verify_incoming_https,           [true, false]
+property :verify_incoming_rpc,             [true, false]
+property :verify_outgoing,                 [true, false]
+property :verify_server_hostname,          [true, false]
+property :watches,                         Hash, default: {}
 
 action :create do
   [::File.dirname(new_resource.path), new_resource.config_dir].each do |dir|
