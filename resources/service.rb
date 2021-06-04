@@ -29,13 +29,39 @@ action :enable do
   end
 
   serv = service new_resource.service_name do
+    supports status: true, restart: true, reload: true
     action :nothing
   end
 
   if node['init_package'] == 'systemd'
     # TODO implement
   elsif node['init_package'] == 'upstart'
-    # TODO implement
+    script_path = "/etc/init/#{new_resource.service_name}"
+
+    serv.init_command(script_path)
+    serv.start_command("#{script_path} start")
+    serv.stop_command("#{script_path} stop")
+    serv.status_command("#{script_path} status")
+    serv.restart_command("#{script_path} restart")
+    serv.reload_command("#{script_path} reload")
+
+    template script_path do
+      source 'upstart.service.erb'
+      owner 'root'
+      group 'root'
+      mode '0755'
+      variables(
+        name: new_resource.service_name,
+        user: new_resource.user,
+        program: new_resource.program,
+        data_dir: new_resource.data_dir,
+        config_file: new_resource.config_file,
+        config_dir: new_resource.config_dir,
+        environment: new_resource.environment
+      )
+      notifies :restart, "service[#{new_resource.service_name}]"
+    end
+
   else
     # Assumes sysvinit fallback
     script_path = "/etc/init.d/#{new_resource.service_name}"
@@ -67,7 +93,6 @@ action :enable do
     end
   end
 
-  # services resource
   serv
 end
 
