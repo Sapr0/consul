@@ -67,7 +67,7 @@ suites:
       consul:
         config: *default-config
         installation:
-          provider: git
+          type: git
     excludes:
       - windows-2012r2
       - windows-2016

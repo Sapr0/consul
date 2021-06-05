@@ -9,54 +9,116 @@ default_action :create
 unified_mode true
 
 property :version,          String, name_property: true
+property :type,             String, equal_to: %w(binary git package), default: 'binary'
 property :extract_path,     String, default: lazy { extract_path }
 property :archive_url,      String, default: 'https://releases.hashicorp.com/consul/%{version}/%{basename}'
 property :archive_basename, String, default: lazy { binary_basename }
 property :archive_checksum, String, default: lazy { binary_checksum }
+property :git_url,          String, default: 'https://github.com/hashicorp/consul'
+property :git_path,         String, default: '/usr/local/go/src/github.com/hashicorp/consul'
+property :package_name,     String
+property :package_source,   String
+property :package_provider, String
 
 action :create do
-  directory join_path(new_resource.extract_to, new_resource.version) do
-    mode '0755'
-    recursive true
-  end
-
-  url = format(new_resource.archive_url, version: new_resource.version, basename: new_resource.archive_basename)
-  remote_file url do
-    destination join_path(new_resource.extract_to, new_resource.version)
-    checksum new_resource.archive_checksum
-    not_if { ::File.exist?(consul_version_path) }
-  end
-
-  archive_file join_path(new_resource.extract_to, new_resource.version) do
-    destination join_path(new_resource.extract_to, new_resource.version)
-    not_if { ::File.exist?(consul_version_path) }
-  end
-
-  link '/usr/local/bin/consul' do
-    to consul_version_path
-    not_if { windows? }
-  end
-
-  link "#{config_prefix_path}\\consul.exe" do
-    to consul_version_path
-    only_if { windows? }
-  end
-
-  windows_path config_prefix_path do
-    action :add
-    only_if { windows? }
-  end
+  install_git     if new_resource.type == 'git'
+  install_package if new_resource.type == 'package'
+  install_binary  if new_resource.type == 'binary'
 end
 
 action :remove do
-  directory join_path(new_resource.extract_to, new_resource.version) do
-    action :delete
+  directory new_resource.git_path do
     recursive true
+    action :delete
+    only_if { new_resource.type == 'git' }
+  end
+
+  package new_resource.package_name do
+    source new_resource.package_source
+    provider new_resource.package_provider
+    version new_resource.version
+    action :remove
+    only_if { new_resource.type == 'package' }
+  end
+
+  directory join_path(new_resource.extract_to, new_resource.version) do
+    recursive true
+    action :delete
+    only_if { new_resource.type == 'binary' }
   end
 end
 
 action_class do
   include ConsulCookbook::Helpers
+
+  def install_binary
+    directory join_path(new_resource.extract_to, new_resource.version) do
+      mode '0755'
+      recursive true
+    end
+
+    url = format(new_resource.archive_url, version: new_resource.version, basename: new_resource.archive_basename)
+    remote_file url do
+      destination join_path(new_resource.extract_to, new_resource.version)
+      checksum new_resource.archive_checksum
+      not_if { ::File.exist?(consul_version_path) }
+    end
+
+    archive_file join_path(new_resource.extract_to, new_resource.version) do
+      destination join_path(new_resource.extract_to, new_resource.version)
+      not_if { ::File.exist?(consul_version_path) }
+    end
+
+    link '/usr/local/bin/consul' do
+      to consul_version_path
+      not_if { windows? }
+    end
+
+    link "#{config_prefix_path}\\consul.exe" do
+      to consul_version_path
+      only_if { windows? }
+    end
+
+    windows_path config_prefix_path do
+      action :add
+      only_if { windows? }
+    end
+  end
+
+  def install_git
+    include_recipe 'golang::default'
+    golang_package 'github.com/mitchellh/gox'
+    golang_package 'github.com/tools/godep'
+
+    directory new_resource.git_path do
+      recursive true
+    end
+
+    package 'zip' do
+      action :install
+    end
+
+    git new_resource.git_path do
+      repository new_resource.git_url
+      revision new_resource.version
+      action :checkout
+    end
+
+    execute 'make' do
+      cwd new_resource.git_path
+      environment(PATH: "#{node['go']['install_dir']}/go/bin:#{node['go']['gobin']}:/usr/bin:/bin",
+                  GOPATH: node['go']['gopath'])
+    end
+  end
+
+  def install_package
+    package new_resource.package_name do
+      source new_resource.package_source
+      provider new_resource.package_provider
+      version new_resource.version
+      action :upgrade
+    end
+  end
 
   def consul_version_path
     program = join_path(new_resource.extract_to, new_resource.version, 'consul')
