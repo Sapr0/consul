@@ -10,10 +10,8 @@ unified_mode true
 
 property :version,          String, name_property: true
 property :type,             String, equal_to: %w(binary git package), default: 'binary'
-property :extract_path,     String, default: lazy { extract_path }
+property :extract_path,     String, default: lazy { ConsulCookbook::Helpers.extract_path }
 property :archive_url,      String, default: 'https://releases.hashicorp.com/consul/%{version}/%{basename}'
-property :archive_basename, String, default: lazy { binary_basename }
-property :archive_checksum, String, default: lazy { binary_checksum }
 property :git_url,          String, default: 'https://github.com/hashicorp/consul'
 property :git_path,         String, default: '/usr/local/go/src/github.com/hashicorp/consul'
 property :package_name,     String
@@ -57,10 +55,10 @@ action_class do
       recursive true
     end
 
-    url = format(new_resource.archive_url, version: new_resource.version, basename: new_resource.archive_basename)
+    url = format(new_resource.archive_url, version: new_resource.version, basename: binary_basename)
     remote_file url do
       destination join_path(new_resource.extract_to, new_resource.version)
-      checksum new_resource.archive_checksum
+      checksum binary_checksum
       not_if { ::File.exist?(consul_version_path) }
     end
 

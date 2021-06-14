@@ -122,6 +122,7 @@ action :reload do
   end
 
   service new_resource.service_name do
+    supports reload: true
     action :reload
     only_if { node['init_package'] != 'systemd' }
   end

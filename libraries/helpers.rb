@@ -12,11 +12,11 @@ module ConsulCookbook
     extend self
 
     def arch_64?
-      node['kernel']['machine'] =~ /x86_64/ ? true : false
+      Chef.node['kernel']['machine'] =~ /x86_64/ ? true : false
     end
 
     def windows?
-      platform_family?('windows') ? true : false
+      Chef.node['os'].eql?('windows') ? true : false
     end
 
     # returns windows friendly version of the provided path,
