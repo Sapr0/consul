@@ -256,7 +256,7 @@ action_class do
     for_keeps = for_keeps.flatten
 
     # Filter out undefined attributes and keep only those listed above
-    config = to_hash.keep_if do |k, v|
+    config = Hash.new.keep_if do |k, v|
       !v.nil? && for_keeps.include?(k.to_sym)
     end.merge(new_resource.options)
     JSON.pretty_generate(Hash[config.sort_by { |k, _| k.to_s }], quirks_mode: true)

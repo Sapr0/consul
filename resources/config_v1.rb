@@ -287,7 +287,7 @@ action_class do
     for_keeps << %i(ca_file ca_path cert_file enable_agent_tls_for_checks key_file) if tls?
     for_keeps = for_keeps.flatten
 
-    raw_config = to_hash
+    raw_config = Hash.new
 
     if raw_config[:retry_join_ec2]
       Chef::Log.warn("Parameter 'retry_join_ec2' is deprecated")
