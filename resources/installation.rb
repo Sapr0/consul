@@ -50,21 +50,16 @@ action_class do
   include ConsulCookbook::Helpers
 
   def install_binary
-    directory join_path(new_resource.extract_path, new_resource.version) do
-      mode '0755'
-      recursive true
-    end
-
     url = format(new_resource.archive_url, version: new_resource.version, basename: binary_basename)
-    remote_file join_path(new_resource.extract_path, new_resource.version, binary_basename) do
+    remote_file join_path(new_resource.extract_path, binary_basename) do
       source url
       checksum binary_checksum
-      not_if { ::File.exist?(consul_version_path) }
+      action :create
     end
 
-    archive_file join_path(new_resource.extract_path, new_resource.version, binary_basename) do
+    archive_file join_path(new_resource.extract_path, binary_basename) do
       destination join_path(new_resource.extract_path, new_resource.version)
-      not_if { ::File.exist?(consul_version_path) }
+      action :extract
     end
 
     link '/usr/local/bin/consul' do
