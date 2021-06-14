@@ -11,12 +11,12 @@ unified_mode true
 property :service_name, String, name_property: true
 property :user,         String, default: lazy { node['consul']['service_user'] }
 property :group,        String, default: lazy { node['consul']['service_group'] }
-property :environment,  Hash,   default: lazy { default_environment }
+property :environment,  Hash,   default: lazy { ConsulCookbook::Helpers.default_environment }
 property :config_file,  String, default: lazy { node['consul']['config']['path'] }
 property :data_dir,     String, default: lazy { node['consul']['config']['data_dir'] }
 property :config_dir,   String, default: lazy { node['consul']['service']['config_dir'] }
 property :nssm_params,  Hash,   default: lazy { node['consul']['service']['nssm_params'] }
-property :program,      String, default: lazy { install_path }
+property :program,      String, default: lazy { ConsulCookbook::Helpers.install_path }
 
 action :enable do
   directory new_resource.data_dir do
@@ -130,16 +130,4 @@ end
 
 action_class do
   include ConsulCookbook::Helpers
-
-  def shell_environment
-    shell = node['consul']['service_shell']
-    shell.nil? ? {} : { 'SHELL' => shell }
-  end
-
-  def default_environment
-    {
-      'GOMAXPROCS' => [node['cpu']['total'], 2].max.to_s,
-      'PATH' => '/usr/local/bin:/usr/bin:/bin',
-    }.merge(shell_environment)
-  end
 end

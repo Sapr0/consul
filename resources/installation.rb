@@ -39,7 +39,7 @@ action :remove do
     only_if { new_resource.type == 'package' }
   end
 
-  directory join_path(new_resource.extract_to, new_resource.version) do
+  directory join_path(new_resource.extract_path, new_resource.version) do
     recursive true
     action :delete
     only_if { new_resource.type == 'binary' }
@@ -50,20 +50,20 @@ action_class do
   include ConsulCookbook::Helpers
 
   def install_binary
-    directory join_path(new_resource.extract_to, new_resource.version) do
+    directory join_path(new_resource.extract_path, new_resource.version) do
       mode '0755'
       recursive true
     end
 
     url = format(new_resource.archive_url, version: new_resource.version, basename: binary_basename)
-    remote_file url do
-      destination join_path(new_resource.extract_to, new_resource.version)
+    remote_file join_path(new_resource.extract_path, new_resource.version, binary_basename) do
+      source url
       checksum binary_checksum
       not_if { ::File.exist?(consul_version_path) }
     end
 
-    archive_file join_path(new_resource.extract_to, new_resource.version) do
-      destination join_path(new_resource.extract_to, new_resource.version)
+    archive_file join_path(new_resource.extract_path, new_resource.version, binary_basename) do
+      destination join_path(new_resource.extract_path, new_resource.version)
       not_if { ::File.exist?(consul_version_path) }
     end
 
@@ -119,7 +119,7 @@ action_class do
   end
 
   def consul_version_path
-    program = join_path(new_resource.extract_to, new_resource.version, 'consul')
+    program = join_path(new_resource.extract_path, new_resource.version, 'consul')
     program += '.exe' if windows?
     program
   end

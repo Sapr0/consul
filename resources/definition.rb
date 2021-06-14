@@ -8,7 +8,7 @@ provides :consul_definition
 default_action :create
 unified_mode true
 
-property :path,       String, default: lazy { join_path node['consul']['service']['config_dir'], "#{name}.json" }
+property :path,       String, default: lazy { ConsulCookbook::Helpers.join_path(node['consul']['service']['config_dir'], "#{name}.json") }
 property :user,       String, default: lazy { node['consul']['service_user'] }
 property :group,      String, default: lazy { node['consul']['service_group'] }
 property :mode,       String, default: '0640'

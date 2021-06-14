@@ -51,5 +51,17 @@ module ConsulCookbook
     def install_path
       windows? ? join_path(program_files, 'consul', 'consul.exe') : join_path('/usr', 'local', 'bin', 'consul')
     end
+
+    def shell_environment
+      shell = Chef.node['consul']['service_shell']
+      shell.nil? ? {} : { 'SHELL' => shell }
+    end
+
+    def default_environment
+      {
+        'GOMAXPROCS' => [Chef.node['cpu']['total'], 2].max.to_s,
+        'PATH' => '/usr/local/bin:/usr/bin:/bin',
+      }.merge(shell_environment)
+    end
   end
 end
